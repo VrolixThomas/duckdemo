@@ -1,0 +1,11 @@
+{
+  "kind": "seeded-demo-author-intent",
+  "notice": "Fictional session for the hackathon rehearsal, not captured telemetry.",
+  "persona": "Noor",
+  "request": "SHOP-101",
+  "messages": [
+    { "speaker": "Noor", "text": "Keep loyalty when a promo is applied. Cap total discounts at 40%." },
+    { "speaker": "coding-agent", "text": "Update the pricing rule, save the applied promo on orders, and show both discounts at checkout." },
+    { "speaker": "Noor", "text": "Use the existing PromoRepository. Do not add new services or caches." }
+  ]
+}

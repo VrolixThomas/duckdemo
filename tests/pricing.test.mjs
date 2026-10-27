@@ -18,3 +18,16 @@ test('quotes use catalog prices, not caller-supplied prices', () => {
 test('invalid cart quantities are rejected', () => {
   assert.throws(() => quoteCart({ items: [{ id: 'emotional-support', quantity: -1 }] }));
 });
+
+test('SHOP-101: loyalty and QUACK15 stack to €75', () => {
+  const quote = applyDiscounts({ subtotalCents: 10000, loyaltyPercent: 10, promoCode: 'QUACK15' });
+  assert.equal(quote.totalCents, 7500);
+  assert.equal(quote.loyaltyCents, 1000);
+  assert.equal(quote.promoCents, 1500);
+});
+test('SHOP-101: combined savings are capped at 40%', () => {
+  const quote = applyDiscounts({ subtotalCents: 10000, loyaltyPercent: 20, promoCode: 'BIGQUACK30' });
+  assert.equal(quote.totalCents, 6000);
+  assert.equal(quote.promoCents, 2000);
+  assert.equal(quote.capped, true);
+});
