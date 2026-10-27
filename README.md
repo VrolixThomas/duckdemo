@@ -12,6 +12,22 @@ npm start
 
 Open **http://127.0.0.1:4310**. `npm run dev` watches server-side changes. Restart or reload after switching branches.
 
+To open **all five rehearsal versions** together, from this main checkout:
+
+```sh
+npm run demo
+```
+
+The launcher uses existing Git worktrees or creates missing ones from the prepared branches. It never checks out or resets your current files. Ctrl+C stops the servers it started. Ports 4310–4314 must be free.
+
+| Demo item | GitHub | Local preview |
+| --- | --- | --- |
+| Main review: stacked duck discounts | [PR #1](https://github.com/VrolixThomas/duckdemo/pull/1) | http://127.0.0.1:4311/checkout |
+| Second review: gift wrapping | [PR #2](https://github.com/VrolixThomas/duckdemo/pull/2) | http://127.0.0.1:4312/checkout |
+| Background task: duplicate emails | [Issue #3](https://github.com/VrolixThomas/duckdemo/issues/3) | Before: http://127.0.0.1:4310/mailroom |
+| Prepared background-agent result | `demo/shipping-agent-solution` | After: http://127.0.0.1:4313/mailroom |
+| Prepared author response | `demo/discounts-author-fix` | http://127.0.0.1:4314/lab |
+
 | Page | What you can do |
 | --- | --- |
 | `/` | Browse the flock and add real catalog items to the cart |

@@ -9,6 +9,6 @@ async function check(directory) {
     else if (/\.(mjs|js)$/.test(path)) execFileSync(process.execPath, ['--check', path], { stdio: 'inherit' });
   }
 }
-await check('src'); await check('public'); await check('tests');
+await check('src'); await check('public'); await check('tests'); await check('demo'); await check('scripts');
 execFileSync(process.execPath, ['--check', 'server.mjs'], { stdio: 'inherit' });
 console.log('QuackMarket source checks passed. No build step or dependencies required.');

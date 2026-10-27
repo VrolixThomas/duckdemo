@@ -6,6 +6,8 @@ This file contains rehearsal spoilers. It is not a product acceptance brief or r
 
 Keep both review PRs **open and unmerged**. The shipping issue stays open for the background agent. Start the shop on the discount PR for the main review; main is the healthy comparison.
 
+Actual demo items: [PR #1](https://github.com/VrolixThomas/duckdemo/pull/1), [PR #2](https://github.com/VrolixThomas/duckdemo/pull/2), [shipping task #3](https://github.com/VrolixThomas/duckdemo/issues/3). Run `npm run demo` in the main checkout to start all five versions on ports 4310–4314. The prepared fix/solution branches have no initial open PRs.
+
 The application is self-contained. No account, key, install, real payment, or email service is necessary.
 
 ## Branches and local previews

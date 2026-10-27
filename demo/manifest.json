@@ -1,0 +1,12 @@
+{
+  "kind": "seeded-hackathon-demo",
+  "name": "QuackMarket",
+  "repository": "VrolixThomas/duckdemo",
+  "reviews": [
+    { "url": "https://github.com/VrolixThomas/duckdemo/pull/1", "branch": "demo/stack-duck-discounts", "port": 4311, "request": "SHOP-101" },
+    { "url": "https://github.com/VrolixThomas/duckdemo/pull/2", "branch": "demo/gift-wrapping", "port": 4312, "request": "SHOP-102" }
+  ],
+  "backgroundTask": { "url": "https://github.com/VrolixThomas/duckdemo/issues/3", "referenceBranch": "demo/shipping-agent-solution", "port": 4313 },
+  "authorResponse": { "branch": "demo/discounts-author-fix", "port": 4314 },
+  "baseline": { "branch": "main", "port": 4310 }
+}
