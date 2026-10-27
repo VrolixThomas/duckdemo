@@ -1,5 +1,4 @@
 import { getCachedPromo } from '../promo/PromoCache.mjs';
-import { PromoExpiredError } from '../promo/errors.mjs';
 
 export const MAX_DISCOUNT_PERCENT = 40;
 
@@ -7,8 +6,9 @@ export const MAX_DISCOUNT_PERCENT = 40;
 export function applyDiscounts({ subtotalCents, loyaltyPercent = 10, promoCode = '', now = new Date() }) {
   if (!Number.isSafeInteger(subtotalCents) || subtotalCents < 0) throw new Error('Invalid subtotal.');
   if (![0, 10, 20].includes(loyaltyPercent)) throw new Error('Unknown loyalty tier.');
-  const promo = getCachedPromo(promoCode, now);
-  if (promo?.expired) throw new PromoExpiredError(promo.code);
+  const foundPromo = getCachedPromo(promoCode, now);
+  // Expiry removes the promo, not loyalty or the rest of a nightly batch.
+  const promo = foundPromo?.expired ? null : foundPromo;
 
   const combinedPercent = loyaltyPercent + (promo?.percent ?? 0);
   const percent = Math.min(combinedPercent, MAX_DISCOUNT_PERCENT);
