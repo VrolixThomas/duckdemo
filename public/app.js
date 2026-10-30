@@ -1,5 +1,6 @@
 import { renderDiscountLines } from './checkout.js';
 import { renderGiftWrap } from './gift-wrap.js';
+import { renderOrderReceipt } from './receipt.js';
 
 const app = document.querySelector('#app');
 const money = (cents) => new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }).format(cents / 100);
@@ -82,7 +83,7 @@ async function updateQuote() {
     document.querySelector('#pay-button').addEventListener('click', async () => {
       try {
         const order = await api('/api/orders', { items: cart, loyaltyPercent, promoCode, giftWrap, giftMessage });
-        document.querySelector('#pay-area').innerHTML = `<div class="order-success" role="status"><span>✓</span><h3>A duck decision well made.</h3><p>${order.id} · ${money(order.totalCents)}<br>Your pretend duck is on its pretend way.</p></div>`;
+        document.querySelector('#pay-area').innerHTML = `<div class="order-success" role="status"><span>✓</span><h3>A duck decision well made.</h3>${renderOrderReceipt(order, money)}</div>`;
       } catch (error) { toast(error.message); }
     });
   } catch (error) {
