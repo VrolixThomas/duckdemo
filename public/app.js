@@ -1,13 +1,12 @@
 import { renderDiscountLines } from './checkout.js';
 import { renderGiftWrap } from './gift-wrap.js';
+import { restoreCart, removeCartItem } from './cart.js';
 
 const app = document.querySelector('#app');
 const money = (cents) => new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }).format(cents / 100);
 const escape = (text) => String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 let products = [];
-let cart;
-try { cart = JSON.parse(localStorage.getItem('quackmarket-cart')); } catch { /* A fresh pond. */ }
-if (!Array.isArray(cart) || !cart.length) cart = [{ id: 'emotional-support', quantity: 1 }];
+let cart = [];
 let loyaltyPercent = 10;
 let promoCode = '';
 let giftWrap = false;
@@ -52,10 +51,14 @@ function shop() {
 }
 
 async function checkout() {
+  if (!cart.length) {
+    app.innerHTML = `<section class="page-heading"><div class="eyebrow">ROOM FOR A LITTLE QUACK</div><h1>Your flock is taking a breather.</h1><p>Your cart is empty. Find a duck when you're ready.</p><a class="button primary" href="/">Meet the flock ↗</a></section>`;
+    return;
+  }
   app.innerHTML = `<section class="page-heading"><a class="back-link" href="/">← Back to the flock</a><div class="eyebrow">ONE EXCELLENT LIFE CHOICE AWAY</div><h1>Your flock is almost home.</h1><p>Good ducks come to those who checkout.</p></section>
     <div class="checkout-grid"><section class="checkout-details"><div class="step-title"><span>01</span><h2>Your excellent choices</h2></div><div class="cart-items">${cart.map((item) => {
       const p = products.find((entry) => entry.id === item.id);
-      return p ? `<article class="cart-item"><div class="cart-thumb"><img src="/images/duck-studio.png" alt="${p.name}"></div><div><h3>${p.name}</h3><p>${p.subtitle}</p><label class="quantity-control">Quantity <select aria-label="Quantity of ${p.name}" data-quantity="${p.id}">${Array.from({ length: 20 }, (_, i) => `<option ${i + 1 === item.quantity ? 'selected' : ''}>${i + 1}</option>`).join('')}</select></label></div><strong>${money(p.priceCents * item.quantity)}</strong></article>` : '';
+      return p ? `<article class="cart-item"><div class="cart-thumb"><img src="/images/duck-studio.png" alt="${p.name}"></div><div><h3>${p.name}</h3><p>${p.subtitle}</p><label class="quantity-control">Quantity <select aria-label="Quantity of ${p.name}" data-quantity="${p.id}">${Array.from({ length: 20 }, (_, i) => `<option ${i + 1 === item.quantity ? 'selected' : ''}>${i + 1}</option>`).join('')}</select></label><button type="button" class="text-button" data-remove="${p.id}" aria-label="Remove ${p.name} from your cart">Remove</button></div><strong>${money(p.priceCents * item.quantity)}</strong></article>` : '';
     }).join('')}</div><div class="step-title"><span>02</span><h2>Who's joining the flock?</h2></div><div class="customer-card"><div class="avatar">A</div><div><strong>Alex Pond</strong><span>alex@example.test</span></div><span class="customer-tag">Welcome back ♡</span></div><label class="field-label" for="loyalty-tier">Your loyalty tier</label><select class="full-select" id="loyalty-tier"><option value="0" ${loyaltyPercent === 0 ? 'selected' : ''}>New to the pond · no loyalty discount</option><option value="10" ${loyaltyPercent === 10 ? 'selected' : ''}>Golden duck · 10% loyalty discount</option><option value="20" ${loyaltyPercent === 20 ? 'selected' : ''}>Platinum pond · 20% loyalty discount</option></select><div class="delivery-note"><span>📦</span><div><strong>Special delivery. Very ordinary box.</strong><p>Free delivery · 2–3 working days · squeak on arrival</p></div></div><div id="gift-options">${renderGiftWrap({ giftWrap, giftMessage })}</div></section>
     <aside class="order-summary"><div class="summary-heading"><h2>The duck maths</h2><span>ALL IN EUR</span></div><div id="quote-content" aria-live="polite">Getting our ducks in a row…</div><form id="promo-form"><label class="field-label" for="promo-code">Got a secret quack?</label><div class="promo-input"><input id="promo-code" name="promo" placeholder="Try QUACK15" value="${escape(promoCode)}" autocomplete="off"><button type="submit">Apply ↗</button></div><p id="promo-feedback" class="field-feedback" aria-live="polite">Codes: QUACK15 · BIGQUACK30</p></form><div id="pay-area"></div><div class="payment-note">A pretend payment. A very real good duck.</div><div class="trust-note"><span>♡</span> 30-day happiness guarantee. Ducks don't judge.</div></aside></div>`;
   document.querySelector('#promo-form').addEventListener('submit', async (event) => {
@@ -65,6 +68,15 @@ async function checkout() {
   app.querySelectorAll('[data-quantity]').forEach((select) => select.addEventListener('change', () => {
     cart.find((item) => item.id === select.dataset.quantity).quantity = Number(select.value); saveCart(); checkout();
   }));
+  app.querySelectorAll('[data-remove]').forEach((button) => button.addEventListener('click', async () => {
+    const removedId = button.dataset.remove;
+    const previousIndex = cart.findIndex((item) => item.id === removedId);
+    cart = removeCartItem(cart, removedId); saveCart();
+    await checkout();
+    const nextButtons = app.querySelectorAll('[data-remove]');
+    const next = nextButtons[Math.min(previousIndex, nextButtons.length - 1)] ?? app.querySelector('a');
+    next?.focus();
+  }));
   document.querySelector('#gift-wrap')?.addEventListener('change', async (event) => { giftWrap = event.target.checked; await updateQuote(); });
   document.querySelector('#gift-message')?.addEventListener('input', (event) => { giftMessage = event.target.value; });
   await updateQuote();
@@ -72,8 +84,10 @@ async function checkout() {
 
 async function updateQuote() {
   const feedback = document.querySelector('#promo-feedback');
+  const quoteContent = document.querySelector('#quote-content');
   try {
     const quote = await api('/api/quote', { items: cart, loyaltyPercent, promoCode, giftWrap, giftMessage });
+    if (!quoteContent.isConnected) return;
     document.querySelector('#quote-content').innerHTML = `<div class="summary-row"><span>Subtotal</span><span>${money(quote.subtotalCents)}</span></div>${renderDiscountLines(quote, money)}${quote.giftWrapCents ? `<div class="summary-row"><span>A little gift quack</span><span>${money(quote.giftWrapCents)}</span></div>` : ''}<div class="summary-row shipping"><span>Shipping</span><span>On us ♡</span></div><div class="summary-total"><span>Total</span><strong>${money(quote.totalCents)}</strong></div>`;
     feedback.textContent = promoCode ? 'Code applied. A little treat for your beak.' : 'Codes: QUACK15 · BIGQUACK30';
     feedback.classList.remove('error');
@@ -86,6 +100,7 @@ async function updateQuote() {
       } catch (error) { toast(error.message); }
     });
   } catch (error) {
+    if (!quoteContent.isConnected) return;
     feedback.textContent = error.message; feedback.classList.add('error');
     document.querySelector('#pay-area').innerHTML = '<p class="field-feedback error">Remove or correct the code to continue.</p>';
   }
@@ -128,8 +143,7 @@ function lab() {
 
 try {
   products = await api('/api/catalog');
-  cart = cart.filter((item) => products.some((p) => p.id === item.id) && Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 20);
-  if (!cart.length) cart = [{ id: 'emotional-support', quantity: 1 }];
+  cart = restoreCart(localStorage.getItem('quackmarket-cart'), products);
   saveCart();
   const route = location.pathname;
   const active = route === '/' ? 'shop' : route.slice(1);
