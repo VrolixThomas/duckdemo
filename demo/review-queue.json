@@ -1,0 +1,99 @@
+{
+  "kind": "prepared-hackathon-review-branches",
+  "repository": "VrolixThomas/duckdemo",
+  "base": "main",
+  "reviewer": "VrolixThomas",
+  "linearProject": "https://linear.app/metahackathon/project/duckdemo-quackmarket-681ab811be17",
+  "preparedAt": "2026-10-30",
+  "reviews": [
+    {
+      "ticket": "MET-54",
+      "title": "Two treats. One duck: keep loyalty when applying a promo",
+      "issueUrl": "https://linear.app/metahackathon/issue/MET-54/two-treats-one-duck-keep-loyalty-when-applying-a-promo",
+      "branch": "demo/met-54-stack-duck-discounts",
+      "port": 4321,
+      "tests": 11,
+      "reading": [
+        "src/pricing/applyDiscounts.mjs",
+        "src/promo/PromoCache.mjs",
+        "src/checkout/quote.mjs",
+        "src/orders/finalizeOrder.mjs",
+        "src/jobs/cartReminder.mjs",
+        "public/checkout.js"
+      ],
+      "request": "docs/requests/checkout-discounts.md",
+      "bodyFile": "demo/pr-descriptions/MET-54.md",
+      "compareUrl": "https://github.com/VrolixThomas/duckdemo/compare/main...demo/met-54-stack-duck-discounts?expand=1"
+    },
+    {
+      "ticket": "MET-55",
+      "title": "A duck, but make it a gift: optional wrapping and personal note",
+      "issueUrl": "https://linear.app/metahackathon/issue/MET-55/a-duck-but-make-it-a-gift-optional-wrapping-and-personal-note",
+      "branch": "demo/met-55-gift-wrapping",
+      "port": 4322,
+      "tests": 14,
+      "reading": [
+        "src/checkout/giftOptions.mjs",
+        "src/checkout/quote.mjs",
+        "public/gift-wrap.js",
+        "public/app.js",
+        "tests/gift-wrapping.test.mjs"
+      ],
+      "request": "docs/requests/gift-wrapping.md",
+      "bodyFile": "demo/pr-descriptions/MET-55.md",
+      "compareUrl": "https://github.com/VrolixThomas/duckdemo/compare/main...demo/met-55-gift-wrapping?expand=1"
+    },
+    {
+      "ticket": "MET-56",
+      "title": "Make the €50 free-shipping promise match checkout",
+      "issueUrl": "https://linear.app/metahackathon/issue/MET-56/make-the-euro50-free-shipping-promise-match-checkout",
+      "branch": "demo/met-56-shipping-threshold",
+      "port": 4323,
+      "tests": 13,
+      "reading": [
+        "src/checkout/shipping.mjs",
+        "src/checkout/quote.mjs",
+        "public/app.js",
+        "public/index.html",
+        "tests/shipping.test.mjs"
+      ],
+      "request": "docs/requests/shipping-threshold.md",
+      "bodyFile": "demo/pr-descriptions/MET-56.md",
+      "compareUrl": "https://github.com/VrolixThomas/duckdemo/compare/main...demo/met-56-shipping-threshold?expand=1"
+    },
+    {
+      "ticket": "MET-57",
+      "title": "Show an itemized receipt after bringing a duck home",
+      "issueUrl": "https://linear.app/metahackathon/issue/MET-57/show-an-itemized-receipt-after-bringing-a-duck-home",
+      "branch": "demo/met-57-itemized-receipts",
+      "port": 4324,
+      "tests": 12,
+      "reading": [
+        "src/orders/orderItems.mjs",
+        "src/orders/finalizeOrder.mjs",
+        "public/receipt.js",
+        "public/app.js",
+        "tests/receipts.test.mjs"
+      ],
+      "request": "docs/requests/itemized-receipts.md",
+      "bodyFile": "demo/pr-descriptions/MET-57.md",
+      "compareUrl": "https://github.com/VrolixThomas/duckdemo/compare/main...demo/met-57-itemized-receipts?expand=1"
+    },
+    {
+      "ticket": "MET-58",
+      "title": "Let a duck leave the cart and keep an empty flock empty",
+      "issueUrl": "https://linear.app/metahackathon/issue/MET-58/let-a-duck-leave-the-cart-and-keep-an-empty-flock-empty",
+      "branch": "demo/met-58-remove-cart-items",
+      "port": 4325,
+      "tests": 12,
+      "reading": [
+        "public/cart.js",
+        "public/app.js",
+        "tests/cart.test.mjs"
+      ],
+      "request": "docs/requests/remove-cart-items.md",
+      "bodyFile": "demo/pr-descriptions/MET-58.md",
+      "compareUrl": "https://github.com/VrolixThomas/duckdemo/compare/main...demo/met-58-remove-cart-items?expand=1"
+    }
+  ]
+}
